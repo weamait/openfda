@@ -3,7 +3,9 @@ import json
 
 headers = {'User-Agent': 'http-client'}
 
-conn = http.client.HTTPSConnection("api.github.com")
-conn.request("GET", 'https://api.fda.gov/drug/event.json?search=results:openfda', None, headers)
-r1 = conn.getresponse()
-print(r1)
+conn = http.client.HTTPSConnection("api.fda.gov")
+
+conn.request("GET", "/drug/label.json?search=results.openfda:spl_id&limit=1", None, headers)
+id0 = conn.getresponse()
+for elem in id0:
+    print(elem)
