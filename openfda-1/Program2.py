@@ -12,6 +12,5 @@ conn.close()
 
 repos = json.loads(repos_raw)
 
-repo = repos['results']
-for elem in repo:
-    print("El identificador es", repo[elem]['id'])
+for elem in repos['results']:
+    print("El identificador es:", elem['id'])
