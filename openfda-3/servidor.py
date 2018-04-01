@@ -1,11 +1,12 @@
 import socket
-
-IP = "192.168.0.161"
-PORT = 10058
-MAX_OPEN_REQUESTS = 5
-
 import http.client
 import json
+
+# Configuracion del servidor: IP, Puerto
+IP = "192.168.0.161"
+PORT = 10059
+MAX_OPEN_REQUESTS = 5
+
 
 headers = {'User-Agent': 'http-client'}
 
@@ -35,11 +36,12 @@ def process_client(clientsocket):
     contenido = """
       <!doctype html>
       <html>
-      for elem in repos['results']:
-        print("El identificador es:", elem['openfda']['generic_name'])
     """
+    for elem in repos['results']:
+        print("El nombre del medicamento es:", elem['openfda']['generic_name'])
     contenido +=elem
     contenido+="</body></html>"
+
     # Creamos el mensaje de respuesta. Tiene que ser un mensaje en
     # HTTP, o de lo contrario el navegador no lo entendera
     # (Hay que hablar HTTP)
@@ -65,17 +67,35 @@ def process_client(clientsocket):
 # ------ Aqui comienza a ejecutarse el servidor
 # -----------------------------------------------
 
+# Crear un socket para el servidor. Es por el que llegan las
+# peticiones de los clientes. Sentido: Cliente -> Servidor
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
+    # Asociar el socket a la direccion IP y puertos del servidor
     serversocket.bind((IP, PORT))
 
+    # Se trata de un socket de servidor, sobre el que escucharemos
+    # Se permiten MAX_OPEN_REQUESTS solicitudes que se encolan antes
+    # El resto se rechazan
     serversocket.listen(MAX_OPEN_REQUESTS)
 
+    # Bucle principal del servidor. El servidor se queda escuchando
+    # el "socket" hasta que llegue una conexion de un cliente
+    # En ese momento la atiende. Para ello recibe otro socket que le
+    # permite comunicarse con el cliente
     while True:
+        # Esperar a que lleguen conexiones del exterior
+        # Cuando llega una conexion nueva, se obtiene un nuevo socket para
+        # comunicarnos con el cliente. Este sockets
+        # contiene la IP y Puerto del cliente
         print("Esperando clientes en IP: {}, Puerto: {}".format(IP, PORT))
         (clientsocket, address) = serversocket.accept()
 
+        # Ahora procesamos la peticion del cliente, pasandole el
+        # socket como argumento
+        # now do something with the clientsocket
+        # in this case, we'll pretend this is a non threaded server
         print("  Peticion de cliente recibida. IP: {}".format(address))
         process_client(clientsocket)
 
