@@ -1,66 +1,84 @@
-import http.server
-import socketserver
+import socket
 
-# -- Puerto donde lanzar el servidor
-PORT = 8003
+IP = "192.168.0.161"
+PORT = 10058
+MAX_OPEN_REQUESTS = 5
+
+import http.client
+import json
+
+headers = {'User-Agent': 'http-client'}
+
+conn = http.client.HTTPSConnection("api.fda.gov")
+conn.request("GET", "/drug/label.json", None, headers)
+r1 = conn.getresponse()
+print(r1.status, r1.reason)
+repos_raw = r1.read().decode("utf-8")
+conn.close()
+
+repos = json.loads(repos_raw)
+
+def process_client(clientsocket):
+    """Funcion que atiende al cliente. Lee su peticion (aunque la ignora)
+       y le envia un mensaje de respuesta en cuyo contenido hay texto
+       en HTML que se muestra en el navegador"""
+
+    # Leemos a traves del socket el mensaje de solicitud del cliente
+    # Pero no hacemos nada con el. Lo descartamos: con independencia de
+    # lo que nos pida, siempre le devolvemos lo mismo
+    mensaje_solicitud = clientsocket.recv(1024)
+
+    # Empezamos definiendo el contenido, porque necesitamos saber cuanto
+    # ocupa para indicarlo en la cabecera
+    # En este contenido pondremos el texto en HTML que queremos que se
+    # visualice en el navegador cliente
+    contenido = """
+      <!doctype html>
+      <html>
+      for elem in repos['results']:
+        print("El identificador es:", elem['openfda']['generic_name'])
+    """
+    contenido +=elem
+    contenido+="</body></html>"
+    # Creamos el mensaje de respuesta. Tiene que ser un mensaje en
+    # HTTP, o de lo contrario el navegador no lo entendera
+    # (Hay que hablar HTTP)
+    # Un mensaje HTTP esta compuesto de
+    # Linea inicial
+    # cabecera
+    # Linea en blanco
+    # Cuerpo (contenido a enviar)
+
+    # -- Indicamos primero que todo OK. Cualquier peticion, aunque sea
+    # -- incorrecta nos va bien (somos un servidor cutre...)
+    linea_inicial = "HTTP/1.1 200 OK\n"
+    cabecera = "Content-Type: text/html\n"
+    cabecera += "Content-Length: {}\n".format(len(str.encode(contenido)))
+
+    # -- Creamos el mensaje uniendo todas sus partes
+    mensaje_respuesta = str.encode(linea_inicial + cabecera + "\n" + contenido)
+    clientsocket.send(mensaje_respuesta)
+    clientsocket.close()
 
 
-# Clase con nuestro manejador. Es una clase derivada de BaseHTTPRequestHandler
-# Esto significa que "hereda" todos los metodos de esta clase. Y los que
-# nosotros consideremos los podemos reemplazar por los nuestros
-class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
+# -----------------------------------------------
+# ------ Aqui comienza a ejecutarse el servidor
+# -----------------------------------------------
 
-    # GET. Este metodo se invoca automaticamente cada vez que hay una
-    # peticion GET por HTTP. El recurso que nos solicitan se encuentra
-    # en self.path
-    def do_GET(self):
+serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        # La primera linea del mensaje de respuesta es el
-        # status. Indicamos que OK
-        self.send_response(200)
-
-        # En las siguientes lineas de la respuesta colocamos las
-        # cabeceras necesarias para que el cliente entienda el
-        # contenido que le enviamos (que sera HTML)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-
-        # Este es el mensaje que enviamos al cliente: un texto y
-        # el recurso solicitado
-
-        if self.path == "/":
-            FILE_HTML = "green.html"
-        elif self.path == "/blue":
-            FILE_HTML = "blue.html"
-        else:
-            FILE_HTML = "pink.html"
-        with open(FILE_HTML,  "r") as f:
-            message  = f.read()
-        # Enviar el mensaaje completo
-        self.wfile.write(bytes(message, "utf8"))
-        print("File served!")
-        return
-
-
-# ----------------------------------
-# El servidor comienza a aqui
-# ----------------------------------
-# Establecemos como manejador nuestra propia clase
-Handler = testHTTPRequestHandler
-
-# -- Configurar el socket del servidor, para esperar conexiones de clientes
-httpd =  socketserver.TCPServer(("", PORT), Handler)
-print("serving at port", PORT)
-
-    # Entrar en el bucle principal
-    # Las peticiones se atienden desde nuestro manejador
-    # Cada vez que se ocurra un "GET" se invoca al metodo do_GET de
-    # nuestro manejador
 try:
-    httpd.serve_forever()
-except KeyboardInterrupt:
-    print("")
-    print("Interrumpido por el usuario")
-httpd.server_close
-print("")
-print("Servidor parado")
+    serversocket.bind((IP, PORT))
+
+    serversocket.listen(MAX_OPEN_REQUESTS)
+
+    while True:
+        print("Esperando clientes en IP: {}, Puerto: {}".format(IP, PORT))
+        (clientsocket, address) = serversocket.accept()
+
+        print("  Peticion de cliente recibida. IP: {}".format(address))
+        process_client(clientsocket)
+
+except socket.error:
+    print("Problemas usando el puerto {}".format(PORT))
+    print("Lanzalo en otro puerto (y verifica la IP)")
