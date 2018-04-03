@@ -4,7 +4,7 @@ import json
 
 # Configuracion del servidor: IP, Puerto
 IP = "192.168.0.158"
-PORT = 8060
+PORT = 8040
 MAX_OPEN_REQUESTS = 5
 
 headers = {'User-Agent': 'http-client'}
@@ -38,12 +38,12 @@ def process_client(clientsocket):
       </html>
     """
     for elem in repos['results']:
-        try:
-            print("El medicamento es:", elem['openfda']['generic_name'])
-            contenido += str(elem)
-            contenido+="</body></html>"
-        except KeyError:
-            print("El medicament carece de nombre generico")
+        if elem['openfda']:
+            print("El medicamento es:", elem['openfda']['generic_name'][0])
+            contenido += (elem['openfda']['generic_name'][0])
+            contenido+="</br></body></html>"
+        else:
+            continue
 
     # Creamos el mensaje de respuesta. Tiene que ser un mensaje en
     # HTTP, o de lo contrario el navegador no lo entendera
