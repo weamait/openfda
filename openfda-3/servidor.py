@@ -4,7 +4,7 @@ import json
 
 # Configuracion del servidor: IP, Puerto
 IP = "192.168.0.158"
-PORT = 8040
+PORT = 9070
 MAX_OPEN_REQUESTS = 5
 
 headers = {'User-Agent': 'http-client'}
@@ -34,6 +34,8 @@ def process_client(clientsocket):
     contenido = """
       <!doctype html>
       <html>
+      <body style='background-color: turquoise'>
+        <h1>Los diez medicamentos son los siguientes:</h1>
       </body>
       </html>
     """
