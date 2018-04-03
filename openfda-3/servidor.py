@@ -3,22 +3,20 @@ import http.client
 import json
 
 # Configuracion del servidor: IP, Puerto
-IP = "192.168.0.161"
-PORT = 10059
+IP = "192.168.0.158"
+PORT = 8060
 MAX_OPEN_REQUESTS = 5
-
 
 headers = {'User-Agent': 'http-client'}
 
 conn = http.client.HTTPSConnection("api.fda.gov")
-conn.request("GET", "/drug/label.json", None, headers)
+conn.request("GET", "/drug/label.json?&limit=10", None, headers)
 r1 = conn.getresponse()
 print(r1.status, r1.reason)
 repos_raw = r1.read().decode("utf-8")
 conn.close()
 
 repos = json.loads(repos_raw)
-
 def process_client(clientsocket):
     """Funcion que atiende al cliente. Lee su peticion (aunque la ignora)
        y le envia un mensaje de respuesta en cuyo contenido hay texto
@@ -36,11 +34,16 @@ def process_client(clientsocket):
     contenido = """
       <!doctype html>
       <html>
+      </body>
+      </html>
     """
     for elem in repos['results']:
-        print("El nombre del medicamento es:", elem['openfda']['generic_name'])
-    contenido +=elem
-    contenido+="</body></html>"
+        try:
+            print("El medicamento es:", elem['openfda']['generic_name'])
+            contenido += str(elem)
+            contenido+="</body></html>"
+        except KeyError:
+            print("El medicament carece de nombre generico")
 
     # Creamos el mensaje de respuesta. Tiene que ser un mensaje en
     # HTTP, o de lo contrario el navegador no lo entendera
