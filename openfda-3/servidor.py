@@ -1,22 +1,24 @@
-import socket
-import http.client
-import json
+import socket #Proporciona acceso a la interfaz de socket BSD
+import http.client #Define las clases que implementan el lado del cliente de los protocolos http y https
+import json # Permite trabajar de forma sencilla con archivos JSON
 
 # Configuracion del servidor: IP, Puerto
 IP = "192.168.0.157"
-PORT = 9092
+PORT = 7778
 MAX_OPEN_REQUESTS = 5
 
 headers = {'User-Agent': 'http-client'}
 
-conn = http.client.HTTPSConnection("api.fda.gov")
-conn.request("GET", "/drug/label.json?&limit=11", None, headers)
-r1 = conn.getresponse()
-print(r1.status, r1.reason)
-repos_raw = r1.read().decode("utf-8")
-conn.close()
+conn = http.client.HTTPSConnection("api.fda.gov") #Establecer conexión con el servidor
+conn.request("GET", "/drug/label.json?&limit=10", None, headers) #Enviar solicitud al servidor
+#Ponemos limite 10, pues nos piden información sobre 10 medicamentos
+respuesta = conn.getresponse() #Obtener respuesta
 
-repos = json.loads(repos_raw)
+resp = respuesta.read().decode("utf-8")#Leer respuesta y descodificar en formato utf-8
+conn.close() #Cerrar la conexión al servidor
+
+medicamentos = json.loads(resp) #Convierte un str de JSON en datos con estructura python, en concreto un diccionario
+
 def process_client(clientsocket):
     """Funcion que atiende al cliente. Lee su peticion (aunque la ignora)
        y le envia un mensaje de respuesta en cuyo contenido hay texto
@@ -39,7 +41,7 @@ def process_client(clientsocket):
       </body>
       </html>
     """
-    for elem in repos['results']:
+    for elem in medicamentos['results']:
         if elem['openfda']:
             print("El medicamento es:", elem['openfda']['generic_name'][0])
             contenido += (elem['openfda']['generic_name'][0])

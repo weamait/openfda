@@ -1,16 +1,19 @@
 import http.client
 import json
-
+#importamos el modulo http.client ya que define las clases que implementan el lado del cliente de los protocolos http y https
+#importamos el modulo json para poder trabajar de forma sencilla con archivos JSON
 headers = {'User-Agent': 'http-client'}
 
-conn = http.client.HTTPSConnection("api.fda.gov")
-conn.request("GET", "/drug/label.json", None, headers)
-r1 = conn.getresponse()
-print(r1.status, r1.reason)
-repos_raw = r1.read().decode("utf-8")
-conn.close()
+conn = http.client.HTTPSConnection("api.fda.gov") #Establecer conexión con el servidor
+conn.request("GET", "/drug/label.json", None, headers) #Enviar solicitud al servidor
+#Si no incluimos limite, por defecto es 1
+respuesta = conn.getresponse() #Obtener respuesta
 
-repos = json.loads(repos_raw)
+resp = respuesta.read().decode("utf-8") #Leer respuesta y descodificar en formato utf-8
+conn.close() #Cerrar la conexión al servidor
 
-repo = repos['results']
-print("El identificador es", repo[0]['id'], ", su propósito es", repo[0]['purpose'], "y el nombre de su fabricante es",repo[0]['openfda']['manufacturer_name'])
+medicamentos = json.loads(resp) # Convierte str de JSON en datos con estructura python, en concreto un diccionario
+
+med_res = medicamentos['results'] #Clave del diccionario de la que extraeremos la información solicitada
+print("El identificador es", med_res[0]['id'], ", su propósito es", str(med_res[0]['purpose'])[2:-2], "y su fabricante es",str(med_res[0]['openfda']['manufacturer_name'])[2:-2])
+#Imprimimos el identificador, proposito y fabricante
