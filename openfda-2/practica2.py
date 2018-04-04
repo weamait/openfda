@@ -13,7 +13,7 @@ conn.close()
 repos = json.loads(repos_raw)
 
 for elem in repos['results']:
-    try:
-        print("Los nombres de todos los fabricantes que producen aspirinas son:", elem['openfda']['manufacturer_name'])
-    except KeyError:
-        print("El medicamento carece de empresa")
+    if elem['openfda']:
+        print("Nombre de fabricante que produce aspirinas:", elem['openfda']['manufacturer_name'])
+    else:
+        continue

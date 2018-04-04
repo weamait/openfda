@@ -13,4 +13,4 @@ conn.close()
 repos = json.loads(repos_raw)
 
 repo = repos['results']
-print("El identificador es", repo[0]['id'], ", el propósito es", repo[0]['purpose'], "y el nombre del fabricante es",repo[0]['openfda']['manufacturer_name'])
+print("El identificador es", repo[0]['id'], ", su propósito es", repo[0]['purpose'], "y el nombre de su fabricante es",repo[0]['openfda']['manufacturer_name'])
