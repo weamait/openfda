@@ -15,5 +15,5 @@ conn.close() #Cerrar la conexión al servidor
 medicamentos = json.loads(resp) # Convierte str de JSON en datos con estructura python, en concreto un diccionario
 
 med_res = medicamentos['results'] #Clave del diccionario de la que extraeremos la información solicitada
-print("El identificador es", med_res[0]['id'], ", su propósito es", med_res[0]['purpose'], "y su fabricante es",med_res[0]['openfda']['manufacturer_name'])
+print("El identificador es", med_res[0]['id'], ", su propósito es", str(med_res[0]['purpose'])[2:-2], "y su fabricante es",str(med_res[0]['openfda']['manufacturer_name'])[2:-2])
 #Imprimimos el identificador, proposito y fabricante
