@@ -4,8 +4,8 @@ import json # Permite trabajar de forma sencilla con archivos JSON
 
 # Configuracion del servidor: IP, Puerto
 IP = "192.168.0.157"
-PORT = 7780
-MAX_OPEN_REQUESTS = 5
+PORT = 7791
+MAX_OPEN_REQUESTS = 5 #Indica el máximo número de peticiones que puede recibir
 
 headers = {'User-Agent': 'http-client'}
 
@@ -19,90 +19,57 @@ conn.close() #Cerrar la conexión al servidor
 
 medicamentos = json.loads(resp) #Convierte un str de JSON en datos con estructura python, en concreto un diccionario
 
-def process_client(clientsocket):
-    """Funcion que atiende al cliente. Lee su peticion (aunque la ignora)
-       y le envia un mensaje de respuesta en cuyo contenido hay texto
-       en HTML que se muestra en el navegador"""
+def process_client(clientsocket): #Función que atiende al cliente y envia respuesta con texto HTML mostrado en el navegador
 
-    # Leemos a traves del socket el mensaje de solicitud del cliente
-    # Pero no hacemos nada con el. Lo descartamos: con independencia de
-    # lo que nos pida, siempre le devolvemos lo mismo
-    mensaje_solicitud = clientsocket.recv(1024)
+    mensaje_solicitud = clientsocket.recv(1024) #Leemos el mensaje de solicitud del cliente a traves del socket
 
-    # Empezamos definiendo el contenido, porque necesitamos saber cuanto
-    # ocupa para indicarlo en la cabecera
-    # En este contenido pondremos el texto en HTML que queremos que se
-    # visualice en el navegador cliente
+    # Definimos el contenido, donde pondremos el texto en HTML que queremos que se visualice en el navegador cliente
+    #También el color y el título que queremos que aparezca
     contenido = """
       <!doctype html>
       <html>
-      <body style='background-color: turquoise'>
-        <h1>Los diez medicamentos son los siguientes:</h1>
+      <body style='background-color: turquoise'> 
+        <h1>Medicamentos obtenidos de la API OpenFDA drugs labelling:</h1>
       </body>
       </html>
     """
-    for elem in medicamentos['results']:
-        if elem['openfda']:
-            print("El medicamento es:", elem['openfda']['generic_name'][0])
-            contenido += (elem['openfda']['generic_name'][0])
+    for elem in medicamentos['results']: #Iteramos sobre los elementos del diccionario que tienen como clave results
+        if elem['openfda']: #Queremos acceder a los valores asociados a la clave openfda
+            print("El medicamento es:", elem['openfda']['generic_name'][0]) #Imprimir el nombre de los medicamentos
+            contenido += (elem['openfda']['generic_name'][0]) #Ir añadiendo al contenido el nombre de los 10 medicamentos
             contenido+="</br></body></html>"
-        else:
+        else: #En caso de que carezca de la clave openfda, le indicamos que continue con el siguiente medicamento
             continue
 
-    # Creamos el mensaje de respuesta. Tiene que ser un mensaje en
-    # HTTP, o de lo contrario el navegador no lo entendera
-    # (Hay que hablar HTTP)
-    # Un mensaje HTTP esta compuesto de
-    # Linea inicial
-    # cabecera
-    # Linea en blanco
-    # Cuerpo (contenido a enviar)
+    # El mensaje de respuesta tiene que ser un mensaje en HTTP (o el navegador no lo entendera)
+    # Un mensaje HTTP esta compuesto de linea inicial, cabecera y el contenido
 
-    # -- Indicamos primero que todo OK. Cualquier peticion, aunque sea
-    # -- incorrecta nos va bien (somos un servidor cutre...)
-    linea_inicial = "HTTP/1.1 200 OK\n"
+    linea_inicial = "HTTP/1.1 200 OK\n" #Indicar OK, cualquier petición nos va bien
     cabecera = "Content-Type: text/html\n"
     cabecera += "Content-Length: {}\n".format(len(str.encode(contenido)))
 
-    # -- Creamos el mensaje uniendo todas sus partes
+    # Unimos todas las partes para crear un mensaje definitivo
     mensaje_respuesta = str.encode(linea_inicial + cabecera + "\n" + contenido)
     clientsocket.send(mensaje_respuesta)
     clientsocket.close()
 
-
-# -----------------------------------------------
-# ------ Aqui comienza a ejecutarse el servidor
-# -----------------------------------------------
-
-# Crear un socket para el servidor. Es por el que llegan las
-# peticiones de los clientes. Sentido: Cliente -> Servidor
+# Crear un socket para el servidor, por el que llegan las peticiones de los clientes. Sentido: Cliente -> Servidor
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 try:
     # Asociar el socket a la direccion IP y puertos del servidor
     serversocket.bind((IP, PORT))
 
-    # Se trata de un socket de servidor, sobre el que escucharemos
-    # Se permiten MAX_OPEN_REQUESTS solicitudes que se encolan antes
-    # El resto se rechazan
-    serversocket.listen(MAX_OPEN_REQUESTS)
+    serversocket.listen(MAX_OPEN_REQUESTS)#Socket sobre el que escucharemos el máximo número de peticiones que indicamos al principio(5)
 
-    # Bucle principal del servidor. El servidor se queda escuchando
-    # el "socket" hasta que llegue una conexion de un cliente
-    # En ese momento la atiende. Para ello recibe otro socket que le
-    # permite comunicarse con el cliente
+    #El servidor se queda escuchando el "socket" hasta que llegue una conexion de un cliente, en ese momento la atiende.
+    # Para ello recibe otro socket que le permite comunicarse con el cliente
     while True:
-        # Esperar a que lleguen conexiones del exterior
-        # Cuando llega una conexion nueva, se obtiene un nuevo socket para
-        # comunicarnos con el cliente. Este sockets
-        # contiene la IP y Puerto del cliente
+    #Llega una conexion nueva, se obtiene un nuevo socket (contiene la IP y Puerto del cliente) para comunicarnos con el cliente.
         print("Esperando clientes en IP: {}, Puerto: {}".format(IP, PORT))
         (clientsocket, address) = serversocket.accept()
 
-        # Ahora procesamos la peticion del cliente, pasandole el
-        # socket como argumento
-        # now do something with the clientsocket
-        # in this case, we'll pretend this is a non threaded server
+    #Procesamos la peticion del cliente, pasandole el socket como argumento
         print("  Peticion de cliente recibida. IP: {}".format(address))
         process_client(clientsocket)
 
