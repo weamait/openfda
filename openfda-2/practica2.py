@@ -19,4 +19,5 @@ for elem in medicamentos['results']: #Iteramos sobre los elementos del diccionar
         print("Nombre de fabricante que produce aspirinas:", str(elem['openfda']['manufacturer_name'])[2:-2])
         #Imprimimos el nombre del fabricante cuyo medicamento contiene ácido acetilsalicílico como principio activo
     else: #En caso de que carezca de la clave openfda, le indicamos que continue con el siguiente medicamento
+        print("El nombre del fabricante no esta especificado")
         continue
