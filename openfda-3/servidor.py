@@ -4,7 +4,7 @@ import json # Permite trabajar de forma sencilla con archivos JSON
 
 # Configuracion del servidor: IP, Puerto
 IP = "127.0.0.1"
-PORT = 7793
+PORT = 7794
 MAX_OPEN_REQUESTS = 5 #Indica el máximo número de peticiones que puede recibir
 
 headers = {'User-Agent': 'http-client'}
