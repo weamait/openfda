@@ -3,8 +3,8 @@ import http.client #Define las clases que implementan el lado del cliente de los
 import json # Permite trabajar de forma sencilla con archivos JSON
 
 # Configuracion del servidor: IP, Puerto
-IP = "192.168.0.155"
-PORT = 7792
+IP = "127.0.0.1"
+PORT = 7793
 MAX_OPEN_REQUESTS = 5 #Indica el máximo número de peticiones que puede recibir
 
 headers = {'User-Agent': 'http-client'}
