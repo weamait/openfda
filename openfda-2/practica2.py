@@ -17,5 +17,5 @@ for elem in datos['results']: #Iteramos sobre los elementos del diccionario que 
         print("El medicamento con id", elem['id'], "ha sido fabricado por", str(elem['openfda']['manufacturer_name'])[2:-2])
         #Imprimimos el nombre del fabricante cuyo medicamento contiene ácido acetilsalicílico como principio activo
     else: #En caso de que carezca de la clave openfda, le indicamos que continue con el siguiente medicamento
-        print("El medicamento con id", elem['id'], "carece de nombre de fabricante no esta especificado")
+        print("El medicamento con id", elem['id'], "no tiene nombre de fabricante especificado")
         continue
