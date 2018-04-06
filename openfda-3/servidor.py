@@ -3,8 +3,8 @@ import http.client #Define las clases que implementan el lado del cliente de los
 import json # Permite trabajar de forma sencilla con archivos JSON
 
 # Configuracion del servidor: IP, Puerto
-IP = "192.168.0.157"
-PORT = 7791
+IP = "192.168.0.155"
+PORT = 7792
 MAX_OPEN_REQUESTS = 5 #Indica el máximo número de peticiones que puede recibir
 
 headers = {'User-Agent': 'http-client'}
@@ -17,7 +17,7 @@ respuesta = conn.getresponse() #Obtener respuesta
 resp = respuesta.read().decode("utf-8")#Leer respuesta y descodificar en formato utf-8
 conn.close() #Cerrar la conexión al servidor
 
-medicamentos = json.loads(resp) #Convierte un str de JSON en datos con estructura python, en concreto un diccionario
+datos = json.loads(resp) #Convierte un str de JSON en datos con estructura python, en concreto un diccionario
 
 def process_client(clientsocket): #Función que atiende al cliente y envia respuesta con texto HTML mostrado en el navegador
 
@@ -33,7 +33,7 @@ def process_client(clientsocket): #Función que atiende al cliente y envia respu
       </body>
       </html>
     """
-    for elem in medicamentos['results']: #Iteramos sobre los elementos del diccionario que tienen como clave results
+    for elem in datos['results']: #Iteramos sobre los elementos del diccionario que tienen como clave results
         if elem['openfda']: #Queremos acceder a los valores asociados a la clave openfda
             print("El medicamento es:", elem['openfda']['generic_name'][0]) #Imprimir el nombre de los medicamentos
             contenido += (elem['openfda']['generic_name'][0]) #Ir añadiendo al contenido el nombre de los 10 medicamentos
