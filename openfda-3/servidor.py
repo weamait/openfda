@@ -4,14 +4,14 @@ import json # Permite trabajar de forma sencilla con archivos JSON
 
 # Configuracion del servidor: IP, Puerto
 IP = "127.0.0.1"
-PORT = 7794
+PORT = 7795
 MAX_OPEN_REQUESTS = 5 #Indica el máximo número de peticiones que puede recibir
 
 headers = {'User-Agent': 'http-client'}
 
 conn = http.client.HTTPSConnection("api.fda.gov") #Establecer conexión con el servidor
-conn.request("GET", "/drug/label.json?&limit=10", None, headers) #Enviar solicitud al servidor
-#Ponemos limite 10, pues nos piden información sobre 10 medicamentos
+conn.request("GET", "/drug/label.json?&limit=11", None, headers) #Enviar solicitud al servidor
+#Ponemos limite 11 ya que nos piden información sobre 10 medicamentos y el segundo carece de nombre generico especificado
 respuesta = conn.getresponse() #Obtener respuesta
 
 resp = respuesta.read().decode("utf-8")#Leer respuesta y descodificar en formato utf-8
