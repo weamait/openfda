@@ -1,4 +1,4 @@
-import socket #Proporciona acceso a la interfaz de socket BSD
+import socket
 import http.client #Define las clases que implementan el lado del cliente de los protocolos http y https
 import json # Permite trabajar de forma sencilla con archivos JSON
 
