@@ -23,14 +23,14 @@ def buscar_empresa():
 @app.route("/listDrugs")
 def lista_medicamentos():
     medicamentos = request.args.get("generic_name").replace(" ", "%20")
-    gestion = gestionopenfda("/drug/label.json?&search=generic_name:"+medicamentos)
+    gestion = gestionopenfda("/drug/label.json?&search=generic_name:"+medicamentos+"&limit=10")
     mi_html = paginaHTML(gestion)
     return mi_html
 
 @app.route("/listCompanies")
 def lista_empresas():
     empresas = request.args.get("manufacturer_name").replace(" ", "%20")
-    gestion = gestionopenfda("/drug/label.json?&limit=11&search=manufacturer_name" + empresas)
+    gestion = gestionopenfda("/drug/label.json?&limit=11&search=manufacturer_name:"+empresas+"&limit=10")
     mi_html = paginaHTML(gestion)
     return mi_html
 
