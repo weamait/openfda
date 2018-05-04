@@ -8,52 +8,54 @@ app = Flask(__name__)
 
 @app.route("/searchDrug")
 def buscar_drugs():
-    ingactivo = request.args.get('active_ingredient')
-    json=gestionopenfda("/drug/label.json?&limit=11&search=active_ingredient" + ingactivo)
-    html= paginaHTML(json)
-    return html
+    ingactivo = request.args.get('active_ingredient').replace(" ", "%20")
+    gestion=gestionopenfda("/drug/label.json?search=active_ingredient:"+ingactivo+"&limit=10")
+    mi_html= paginaHTML(gestion)
+    return mi_html
 
 @app.route("/searchCompany")
 def buscar_empresa():
-    empresa = request.args.get('company')
-    json = gestionopenfda("/drug/label.json?&limit=11&search=company" + empresa)
-    html = paginaHTML(json)
-    return html
+    empresa = request.args.get('company').replace(" ", "%20")
+    gestion = gestionopenfda("/drug/label.json?search=company:"+empresa+"&limit=10")
+    mi_html = paginaHTML(gestion)
+    return mi_html
 
 @app.route("/listDrugs")
 def lista_medicamentos():
-    medicamentos = request.args.get("generic_name")
-    json = gestionopenfda("/drug/label.json?&limit=11&search=generic_name" + medicamentos)
-    html = paginaHTML(json)
-    return html
+    medicamentos = request.args.get("generic_name").replace(" ", "%20")
+    gestion = gestionopenfda("/drug/label.json?&search=generic_name:"+medicamentos)
+    mi_html = paginaHTML(gestion)
+    return mi_html
 
 @app.route("/listCompanies")
 def lista_empresas():
-    empresas = request.args.get("manufacturer_name")
-    json = gestionopenfda("/drug/label.json?&limit=11&search=manufacturer_name" + empresas)
-    html = paginaHTML(json)
-    return html
+    empresas = request.args.get("manufacturer_name").replace(" ", "%20")
+    gestion = gestionopenfda("/drug/label.json?&limit=11&search=manufacturer_name" + empresas)
+    mi_html = paginaHTML(gestion)
+    return mi_html
 
-def gestionopenfda():
+def gestionopenfda(gestion):
     headers = {'User-Agent': 'http-client'}
 
     conn = http.client.HTTPSConnection("api.fda.gov")
-    conn.request("GET", "/drug/label.json?&limit=11", None, headers)
+    conn.request("GET", gestion, None, headers)
     respuesta = conn.getresponse()
-
     resp = respuesta.read().decode("utf-8")
     conn.close()
     datos = json.loads(resp)
 
+    drugs=""
     for elem in datos['results']:
         if elem['openfda']:
-            datos = ("El medicamento es:", elem['openfda']['generic_name'][0])
+            drugs += str(elem['openfda']['generic_name'][0])
+            drugs += "<br>"
         else:
-            datos= ("No encontrado")
+            drugs += ("No encontrado")
+            drugs += "<br>"
             continue
-    return datos
+    return drugs
 @app.route("/")
-def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que sea.
+def paginaHTML(drugs): #crear página web con formularios o alguna pregunta o lo que sea.
     contenido = """
           <!DOCTYPE html>
             <html>
@@ -72,10 +74,12 @@ def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que 
               <input type="submit" value="Submit">
             </form> 
 
-            <p>If you click the "Submit" button, the form-data will be sent to a page called "/action_page.php".</p>
+            <p>If you click the "Submit" button, the form-data will be sent to a page called "/action_page.php".</p>"""
 
-            </body>
-            </html>"""
+
+    contenido += drugs
+    contenido +="""</body></html>"""
+
     return contenido
 
 
