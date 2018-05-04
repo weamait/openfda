@@ -1,29 +1,57 @@
 from flask import Flask
 from flask import request
+import http.client
+import json
 
 app = Flask(__name__)
 
 
 @app.route("/searchDrug")
-def hello():
+def buscar_drugs():
     ingactivo = request.args.get('active_ingredient')
-    return "Hello World!"+ingactivo
+    json=gestionopenfda("/drug/label.json?&limit=11&search=active_ingredient" + ingactivo)
+    html= paginaHTML(json)
+    return html
 
 @app.route("/searchCompany")
 def buscar_empresa():
     empresa = request.args.get('company')
-    return empresa
+    json = gestionopenfda("/drug/label.json?&limit=11&search=company" + empresa)
+    html = paginaHTML(json)
+    return html
 
 @app.route("/listDrugs")
 def lista_medicamentos():
     medicamentos = request.args.get("generic_name")
-    return medicamentos
+    json = gestionopenfda("/drug/label.json?&limit=11&search=generic_name" + medicamentos)
+    html = paginaHTML(json)
+    return html
 
 @app.route("/listCompanies")
 def lista_empresas():
     empresas = request.args.get("manufacturer_name")
-    return empresas
+    json = gestionopenfda("/drug/label.json?&limit=11&search=manufacturer_name" + empresas)
+    html = paginaHTML(json)
+    return html
 
+def gestionopenfda():
+    headers = {'User-Agent': 'http-client'}
+
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET", "/drug/label.json?&limit=11", None, headers)
+    respuesta = conn.getresponse()
+
+    resp = respuesta.read().decode("utf-8")
+    conn.close()
+    datos = json.loads(resp)
+
+    for elem in datos['results']:
+        if elem['openfda']:
+            datos = ("El medicamento es:", elem['openfda']['generic_name'][0])
+        else:
+            datos= ("No encontrado")
+            continue
+    return datos
 @app.route("/")
 def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que sea.
     contenido = """
