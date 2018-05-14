@@ -55,7 +55,7 @@ def gestionopenfda(gestion):
             continue
     return drugs
 @app.route("/")
-def paginaHTML(drugs): #crear página web con formularios o alguna pregunta o lo que sea.
+def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que sea.
     contenido = """
         <!DOCTYPE html>
         <html>
@@ -63,7 +63,7 @@ def paginaHTML(drugs): #crear página web con formularios o alguna pregunta o lo
         <h2>Entrada</h2>
         <form action="/searchDrug">
           active_ingredient:<br>
-          <input type="text" name="firstname">
+          <input type="text" name="active_ingredient">
           <br>
           Limit:<br>
           <input type="text" name="lastname">
@@ -78,11 +78,11 @@ def paginaHTML(drugs): #crear página web con formularios o alguna pregunta o lo
         <body>
         <h2>Entrada</h2>
         <form action="/searchCompany">
-          active_ingredient:<br>
-          <input type="text" name="firstname">
+          company:<br>
+          <input type="text" name="company">
           <br>
           Limit:<br>
-          <input type="text" name="lastname">
+          <input type="text" name="limit">
           <br><br>
           <input type="submit" value="Submit">
         </form>
@@ -95,7 +95,7 @@ def paginaHTML(drugs): #crear página web con formularios o alguna pregunta o lo
         <h2>Entrada</h2>
         <form action="/listDrugs">
           Limit:<br>
-          <input type="text" name="lastname">
+          <input type="text" name="limit">
           <br><br>
           <input type="submit" value="Submit">
         </form>
@@ -108,7 +108,7 @@ def paginaHTML(drugs): #crear página web con formularios o alguna pregunta o lo
         <h2>Entrada</h2>
         <form action="/listCompanies">
           Limit:<br>
-          <input type="text" name="lastname">
+          <input type="text" name="limit">
           <br><br>
           <input type="submit" value="Submit">
         </form>
@@ -120,4 +120,4 @@ def paginaHTML(drugs): #crear página web con formularios o alguna pregunta o lo
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=8000)
+    app.run(host='0.0.0.0',port=8001)
