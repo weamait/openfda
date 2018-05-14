@@ -60,81 +60,60 @@ def paginaHTML(drugs): #crear página web con formularios o alguna pregunta o lo
         <!DOCTYPE html>
         <html>
         <body>
-
         <h2>Entrada</h2>
-
         <form action="/searchDrug">
           active_ingredient:<br>
           <input type="text" name="firstname">
           <br>
-          Limite:<br>
+          Limit:<br>
           <input type="text" name="lastname">
           <br><br>
           <input type="submit" value="Submit">
         </form>
-
         </body>
         </html>"""
     contenido +="""
         <!DOCTYPE html>
         <html>
         <body>
-
         <h2>Entrada</h2>
-
-        <form action="/searchDrug">
+        <form action="/searchCompany">
           active_ingredient:<br>
           <input type="text" name="firstname">
           <br>
-          Limite:<br>
+          Limit:<br>
           <input type="text" name="lastname">
           <br><br>
           <input type="submit" value="Submit">
         </form>
-
         </body>
         </html>"""
     contenido +="""
         <!DOCTYPE html>
         <html>
         <body>
-
         <h2>Entrada</h2>
-
-        <form action="/searchDrug">
-          active_ingredient:<br>
-          <input type="text" name="firstname">
-          <br>
-          Limite:<br>
+        <form action="/listDrugs">
+          Limit:<br>
           <input type="text" name="lastname">
           <br><br>
           <input type="submit" value="Submit">
         </form>
-
         </body>
         </html>"""
     contenido +="""
         <!DOCTYPE html>
         <html>
         <body>
-
         <h2>Entrada</h2>
-
-        <form action="/searchDrug">
-          active_ingredient:<br>
-          <input type="text" name="firstname">
-          <br>
-          Limite:<br>
+        <form action="/listCompanies">
+          Limit:<br>
           <input type="text" name="lastname">
           <br><br>
           <input type="submit" value="Submit">
         </form>
-
         </body>
         </html>"""
-    
-    contenido += drugs
-    contenido +="""</body></html>"""
 
     return contenido
 
