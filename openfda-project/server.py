@@ -60,7 +60,8 @@ def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que 
         <!DOCTYPE html>
         <html>
         <body>
-        <h2>ACtive ingredient</h2>
+        <body style='background-color: turquoise'>
+        <h2>Active ingredient</h2>
         <form action="/searchDrug">
           active_ingredient:<br>
           <input type="text" name="active_ingredient">
@@ -79,7 +80,7 @@ def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que 
         <h2>Company</h2>
         <form action="/searchCompany">
           company:<br>
-          <input type="text" name="company">
+          <input type="text" name="manufacturer_name">
           <br>
           Limit:<br>
           <input type="text" name="limit">
@@ -120,4 +121,4 @@ def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que 
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=8002)
+    app.run(host='0.0.0.0',port=8000)
