@@ -57,26 +57,82 @@ def gestionopenfda(gestion):
 @app.route("/")
 def paginaHTML(drugs): #crear página web con formularios o alguna pregunta o lo que sea.
     contenido = """
-          <!DOCTYPE html>
-            <html>
-            <body>
-            <body style='background-color: turquoise'>
+        <!DOCTYPE html>
+        <html>
+        <body>
 
-            <h2>HTML Forms</h2>
+        <h2>Entrada</h2>
 
-            <form action="/action_page.php">
-              Search Drug:<br>
-              <input type="text" name="searchDrug">
-              <br>
-              Search company:<br>
-              <input type="text" name="searchCompany">
-              <br><br>
-              <input type="submit" value="Submit">
-            </form> 
+        <form action="/searchDrug">
+          active_ingredient:<br>
+          <input type="text" name="firstname">
+          <br>
+          Limite:<br>
+          <input type="text" name="lastname">
+          <br><br>
+          <input type="submit" value="Submit">
+        </form>
 
-            <p>If you click the "Submit" button, the form-data will be sent to a page called "/action_page.php".</p>"""
+        </body>
+        </html>"""
+    contenido +="""
+        <!DOCTYPE html>
+        <html>
+        <body>
 
+        <h2>Entrada</h2>
 
+        <form action="/searchDrug">
+          active_ingredient:<br>
+          <input type="text" name="firstname">
+          <br>
+          Limite:<br>
+          <input type="text" name="lastname">
+          <br><br>
+          <input type="submit" value="Submit">
+        </form>
+
+        </body>
+        </html>"""
+    contenido +="""
+        <!DOCTYPE html>
+        <html>
+        <body>
+
+        <h2>Entrada</h2>
+
+        <form action="/searchDrug">
+          active_ingredient:<br>
+          <input type="text" name="firstname">
+          <br>
+          Limite:<br>
+          <input type="text" name="lastname">
+          <br><br>
+          <input type="submit" value="Submit">
+        </form>
+
+        </body>
+        </html>"""
+    contenido +="""
+        <!DOCTYPE html>
+        <html>
+        <body>
+
+        <h2>Entrada</h2>
+
+        <form action="/searchDrug">
+          active_ingredient:<br>
+          <input type="text" name="firstname">
+          <br>
+          Limite:<br>
+          <input type="text" name="lastname">
+          <br><br>
+          <input type="submit" value="Submit">
+        </form>
+
+        </body>
+        </html>"""
+    
     contenido += drugs
     contenido +="""</body></html>"""
 
