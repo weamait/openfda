@@ -44,16 +44,18 @@ def gestionopenfda(gestion):
     conn.close()
     datos = json.loads(resp)
 
-    drugs=""
-    for elem in datos['results']:
-        if elem['openfda']:
-            drugs += str(elem['openfda']['generic_name'][0])
-            drugs += "<br>"
-        else:
-            drugs += ("No encontrado")
-            drugs += "<br>"
-            continue
+    drugs = ""
+    if "results" in datos:
+        for elem in datos['results']:
+            if elem['openfda']:
+                drugs += str(elem['openfda']['generic_name'][0])
+                drugs += "<br>"
+            else:
+                drugs += ("No encontrado")
+                drugs += "<br>"
+                continue
     return drugs
+
 @app.route("/")
 def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que sea.
     contenido = """
