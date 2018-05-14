@@ -60,7 +60,7 @@ def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que 
         <!DOCTYPE html>
         <html>
         <body>
-        <h2>Active ingredient</h2>
+        <h2>ACtive ingredient</h2>
         <form action="/searchDrug">
           active_ingredient:<br>
           <input type="text" name="active_ingredient">
