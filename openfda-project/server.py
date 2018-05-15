@@ -34,6 +34,20 @@ def lista_empresas():
     mi_html = informacion(gestion)
     return mi_html
 
+@app.errorhandler(404)
+def recurso_no_encontrado(error):
+    notfound = """
+              <!doctype html>
+              <html>
+              <body style='background-color: red'>
+                <h1>Recurso no encontrado</h2>
+              <body>
+              <html>
+            """
+    return  notfound
+
+
+
 def gestionopenfda(gestion):
     headers = {'User-Agent': 'http-client'}
 
