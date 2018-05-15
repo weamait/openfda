@@ -62,13 +62,11 @@ def gestionopenfda(gestion):
     if "results" in datos:
         for elem in datos['results']:
             if 'generic_name' in elem['openfda']:
-                drugs += "<li>"
                 drugs += str(elem['openfda']['generic_name'][0])
-                drugs += "</li>"
+                drugs += "</br></body></html>"
             else:
-                drugs += "<li>"
                 drugs += ("No encontrado")
-                drugs += "</li>"
+                drugs += "</br></body></html>"
                 continue
     return drugs
 
@@ -76,10 +74,11 @@ def informacion(drugs):
     info = """
           <!doctype html>
           <html>
-          <body style='background-color: turquoise'>
+          <body style='background-color: DeepSkyBlue'>
             <h1>Drugs</h2>
           <body>
           <html>
+          <ul>
         """
 
     info += drugs
@@ -101,13 +100,11 @@ def gestionopenfda1(gestion1):
     if "results" in datos1:
         for elem in datos1['results']:
             if 'generic_name' in elem['openfda']:
-                drugs1 += "<li>"
                 drugs1 += str(elem['openfda']['manufacturer_name'][0])
-                drugs1 += "</li>"
+                drugs1 += "</br></body></html>"
             else:
-                drugs1 += "<li>"
                 drugs1 += ("No encontrado")
-                drugs1 += "</li>"
+                drugs1 += "</br></body></html>"
                 continue
     return drugs1
 
@@ -115,12 +112,12 @@ def informacion1(drugs1):
     info1 = """
           <!doctype html>
           <html>
-          <body style='background-color: turquoise'>
+          <body style='background-color: DeepSkyBlue'>
             <h1>Drugs</h2>
           <body>
           <html>
+          <ul>
         """
-
     info1 += drugs1
     info1 += """</ul></body></html>"""
 
@@ -130,7 +127,7 @@ def informacion1(drugs1):
 
 
 @app.route("/")
-def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que sea.
+def paginaHTML():
     contenido = """
         <!DOCTYPE html>
         <html>
