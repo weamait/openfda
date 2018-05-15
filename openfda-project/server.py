@@ -1,8 +1,7 @@
-from flask import Flask
 from flask import request
 import http.client
 import json
-from flask import Flask,redirect
+from flask import Flask,redirect,abort
 
 app = Flask(__name__)
 
@@ -214,7 +213,6 @@ def redireccion():
 
 @app.route('/secret')
 def autenticacion():
-    return redirect("http://localhost:8000/", code=401)
-
+    abort(401)
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=8000)
