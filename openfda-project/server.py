@@ -17,7 +17,7 @@ def buscar_drugs():
 def buscar_empresa():
     empresa = request.args.get('manufacturer_name').replace(" ", "%20")
     gestion1 = gestionopenfda1("/drug/label.json?search=manufacturer_name:"+empresa+"&limit=10")
-    mi_html = informacion1(gestion1)
+    mi_html = informacion(gestion1)
     return mi_html
 
 @app.route("/listDrugs")
@@ -31,14 +31,14 @@ def lista_medicamentos():
 def lista_empresas():
     empresas = request.args.get('limit')
     gestion1 = gestionopenfda1("/drug/label.json?&limit="+empresas)
-    mi_html = informacion1(gestion1)
+    mi_html = informacion(gestion1)
     return mi_html
 
 @app.route("/listWarnings")
 def lista_advertencias():
     adver = request.args.get('limit')
     warnings = advertencias("/drug/label.json?&limit="+adver)
-    mi_html = informacion2(warnings)
+    mi_html = informacion(warnings)
     return mi_html
 
 @app.errorhandler(404)
@@ -77,6 +77,52 @@ def gestionopenfda(gestion):
                 continue
     return drugs
 
+
+def gestionopenfda1(gestion1):
+    headers = {'User-Agent': 'http-client'}
+
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET", gestion1, None, headers)
+    respuesta = conn.getresponse()
+    resp = respuesta.read().decode("utf-8")
+    conn.close()
+    datos = json.loads(resp)
+
+    drugs = ""
+    if "results" in datos:
+        for elem in datos['results']:
+            if 'generic_name' in elem['openfda']:
+                drugs += str(elem['openfda']['manufacturer_name'][0])
+                drugs += "</br></body></html>"
+            else:
+                drugs += ("No encontrado")
+                drugs += "</br></body></html>"
+                continue
+    return drugs
+
+def advertencias(warnings):
+    headers = {'User-Agent': 'http-client'}
+
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET", warnings, None, headers)
+    respuesta = conn.getresponse()
+    resp = respuesta.read().decode("utf-8")
+    conn.close()
+    datos = json.loads(resp)
+
+    drugs = ""
+    if "results" in datos:
+        for elem in datos['results']:
+            if 'warnings' in elem:
+                drugs += str(['warnings'][0])
+                drugs += "</br></body></html>"
+            else:
+                drugs += ("No hay advertencias")
+                drugs += "</br></body></html>"
+                continue
+    return drugs
+
+
 def informacion(drugs):
     info = """
           <!doctype html>
@@ -92,84 +138,6 @@ def informacion(drugs):
     info += """</ul></body></html>"""
 
     return info
-
-def gestionopenfda1(gestion1):
-    headers = {'User-Agent': 'http-client'}
-
-    conn = http.client.HTTPSConnection("api.fda.gov")
-    conn.request("GET", gestion1, None, headers)
-    respuesta = conn.getresponse()
-    resp = respuesta.read().decode("utf-8")
-    conn.close()
-    datos1 = json.loads(resp)
-
-    drugs1 = ""
-    if "results" in datos1:
-        for elem in datos1['results']:
-            if 'generic_name' in elem['openfda']:
-                drugs1 += str(elem['openfda']['manufacturer_name'][0])
-                drugs1 += "</br></body></html>"
-            else:
-                drugs1 += ("No encontrado")
-                drugs1 += "</br></body></html>"
-                continue
-    return drugs1
-
-def informacion1(drugs1):
-    info1 = """
-          <!doctype html>
-          <html>
-          <body style='background-color: DeepSkyBlue'>
-            <h1>Drugs</h2>
-          <body>
-          <html>
-          <ul>
-        """
-    info1 += drugs1
-    info1 += """</ul></body></html>"""
-
-    return info1
-
-def advertencias(warnings):
-    headers = {'User-Agent': 'http-client'}
-
-    conn = http.client.HTTPSConnection("api.fda.gov")
-    conn.request("GET", warnings, None, headers)
-    respuesta = conn.getresponse()
-    resp = respuesta.read().decode("utf-8")
-    conn.close()
-    datos2 = json.loads(resp)
-
-    drugs2 = ""
-    if "results" in datos2:
-        for elem in datos2['results']:
-            if 'warnings' in elem:
-                drugs2 += str(['warnings'][0])
-                drugs2 += "</br></body></html>"
-            else:
-                drugs2 += ("No hay advertencias")
-                drugs2 += "</br></body></html>"
-                continue
-    return drugs2
-
-
-def informacion2(drugs2):
-    info2 = """
-              <!doctype html>
-              <html>
-              <body style='background-color: DeepSkyBlue'>
-                <h1>Drugs</h2>
-              <body>
-              <html>
-              <ul>
-            """
-    info2 += drugs2
-    info2 += """</ul></body></html>"""
-
-    return info2
-
-
-
 
 @app.route("/")
 def paginaHTML():
