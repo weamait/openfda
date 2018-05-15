@@ -81,8 +81,8 @@ def informacion(drugs):
           <html>
           <body style='background-color: turquoise'>
             <h1>Drugs</h2>
-            <p></p>
-        <ul>
+          <body>
+          <html>
         """
 
     info += drugs
