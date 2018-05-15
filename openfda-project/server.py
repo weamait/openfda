@@ -10,15 +10,25 @@ app = Flask(__name__)
 @app.route("/searchDrug")
 def buscar_drugs():
     ingactivo = request.args.get('active_ingredient').replace(" ", "%20")
-    gestion = gestionopenfda("/drug/label.json?search=active_ingredient:"+ingactivo+"&limit=10")
-    mi_html = informacion(gestion)
+    limit = request.args.get('limit')
+    if limit:
+        gestion = gestionopenfda("/drug/label.json?search=active_ingredient:"+ingactivo+"&limit="+limit)
+        mi_html = informacion(gestion)
+    else:
+        gestion = gestionopenfda("/drug/label.json?search=active_ingredient:" + ingactivo + "&limit=10")
+        mi_html = informacion(gestion)
     return mi_html
 
 @app.route("/searchCompany")
 def buscar_empresa():
     empresa = request.args.get('company').replace(" ", "%20")
-    gestion1 = gestionopenfda1("/drug/label.json?search=manufacturer_name:"+empresa+"&limit=10")
-    mi_html = informacion(gestion1)
+    limit = request.args.get('limit')
+    if limit:
+        gestion1 = gestionopenfda1("/drug/label.json?search=manufacturer_name:"+empresa+"&limit="+limit)
+        mi_html = informacion(gestion1)
+    else:
+        gestion1 = gestionopenfda1("/drug/label.json?search=manufacturer_name:" + empresa + "&limit=10")
+        mi_html = informacion(gestion1)
     return mi_html
 
 @app.route("/listDrugs")
@@ -131,6 +141,9 @@ def paginaHTML():
         <form action="searchDrug">
           active_ingredient:<br>
           <input type="text" name="active_ingredient">
+          <br>
+          Limit:<br>
+          <input type="text" name="limit">
           <br><br>
           <input type="submit" value="Submit">
         </form>
@@ -144,6 +157,9 @@ def paginaHTML():
         <form action="searchCompany">
           company:<br>
           <input type="text" name="company">
+           <br>
+          Limit:<br>
+          <input type="text" name="limit">
           <br><br>
           <input type="submit" value="Submit">
         </form>
