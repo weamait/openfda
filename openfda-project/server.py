@@ -16,22 +16,22 @@ def buscar_drugs():
 @app.route("/searchCompany")
 def buscar_empresa():
     empresa = request.args.get('manufacturer_name').replace(" ", "%20")
-    gestion = gestionopenfda("/drug/label.json?search=manufacturer_name:"+empresa+"&limit=10")
-    mi_html = informacion(gestion)
+    gestion1 = gestionopenfda1("/drug/label.json?search=manufacturer_name:"+empresa+"&limit=10")
+    mi_html = informacion1(gestion1)
     return mi_html
 
 @app.route("/listDrugs")
 def lista_medicamentos():
-    medicamentos = request.args.get("generic_name")
-    gestion = gestionopenfda("/drug/label.json?&search=generic_name:"+medicamentos+"&limit=10")
+    medicamentos = request.args.get('limit')
+    gestion = gestionopenfda("/drug/label.json?&limit="+medicamentos)
     mi_html = informacion(gestion)
     return mi_html
 
 @app.route("/listCompanies")
 def lista_empresas():
-    empresas = request.args.get("limit")
-    gestion = gestionopenfda("/drug/label.json?&limit=11&limit:"+ empresas)
-    mi_html = informacion(gestion)
+    empresas = request.args.get('limit')
+    gestion1 = gestionopenfda1("/drug/label.json?&limit="+empresas)
+    mi_html = informacion1(gestion1)
     return mi_html
 
 @app.errorhandler(404)
@@ -65,16 +65,13 @@ def gestionopenfda(gestion):
                 drugs += "<li>"
                 drugs += str(elem['openfda']['generic_name'][0])
                 drugs += "</li>"
-            elif 'manufacturer_name' in elem['openfda']:
-                drugs += "<li>"
-                drugs += str(elem['openfda']['manufacturer_name'][0])
-                drugs += "</li>"
             else:
                 drugs += "<li>"
                 drugs += ("No encontrado")
                 drugs += "</li>"
                 continue
     return drugs
+
 def informacion(drugs):
     info = """
           <!doctype html>
@@ -89,6 +86,49 @@ def informacion(drugs):
     info += """</ul></body></html>"""
 
     return info
+
+def gestionopenfda1(gestion1):
+    headers = {'User-Agent': 'http-client'}
+
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET", gestion1, None, headers)
+    respuesta = conn.getresponse()
+    resp = respuesta.read().decode("utf-8")
+    conn.close()
+    datos1 = json.loads(resp)
+
+    drugs1 = ""
+    if "results" in datos1:
+        for elem in datos1['results']:
+            if 'generic_name' in elem['openfda']:
+                drugs1 += "<li>"
+                drugs1 += str(elem['openfda']['manufacturer_name'][0])
+                drugs1 += "</li>"
+            else:
+                drugs1 += "<li>"
+                drugs1 += ("No encontrado")
+                drugs1 += "</li>"
+                continue
+    return drugs1
+
+def informacion1(drugs1):
+    info1 = """
+          <!doctype html>
+          <html>
+          <body style='background-color: turquoise'>
+            <h1>Drugs</h2>
+          <body>
+          <html>
+        """
+
+    info1 += drugs1
+    info1 += """</ul></body></html>"""
+
+    return info1
+
+
+
+
 @app.route("/")
 def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que sea.
     contenido = """
