@@ -9,29 +9,29 @@ app = Flask(__name__)
 @app.route("/searchDrug")
 def buscar_drugs():
     ingactivo = request.args.get('active_ingredient').replace(" ", "%20")
-    gestion=gestionopenfda("/drug/label.json?search=active_ingredient:"+ingactivo+"&limit=10")
-    mi_html= paginaHTML(gestion)
+    gestion = gestionopenfda("/drug/label.json?search=active_ingredient:"+ingactivo+"&limit=10")
+    mi_html = informacion(gestion)
     return mi_html
 
 @app.route("/searchCompany")
 def buscar_empresa():
     empresa = request.args.get('company').replace(" ", "%20")
     gestion = gestionopenfda("/drug/label.json?search=manufacturer_name:"+empresa+"&limit=10")
-    mi_html = paginaHTML(gestion)
+    mi_html = informacion(gestion)
     return mi_html
 
 @app.route("/listDrugs")
 def lista_medicamentos():
     medicamentos = request.args.get("generic_name").replace(" ", "%20")
     gestion = gestionopenfda("/drug/label.json?&search=generic_name:"+medicamentos+"&limit=10")
-    mi_html = paginaHTML(gestion)
+    mi_html = informacion(gestion)
     return mi_html
 
 @app.route("/listCompanies")
 def lista_empresas():
     empresas = request.args.get("manufacturer_name").replace(" ", "%20")
     gestion = gestionopenfda("/drug/label.json?&limit=11&search=manufacturer_name:"+empresas+"&limit=10")
-    mi_html = paginaHTML(gestion)
+    mi_html = informacion(gestion)
     return mi_html
 
 def gestionopenfda(gestion):
@@ -61,7 +61,20 @@ def gestionopenfda(gestion):
                 drugs += "</li>"
                 continue
     return drugs
+def informacion(drugs):
+    info = """
+          <!doctype html>
+          <html>
+          <body style='background-color: turquoise'>
+            <h1>Drugs</h2>
+            <p></p>
+        <ul>
+        """
 
+    info += drugs
+    info += """</ul></body></html>"""
+
+    return info
 @app.route("/")
 def paginaHTML(): #crear página web con formularios o alguna pregunta o lo que sea.
     contenido = """
