@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 import http.client
 import json
+from flask import Flask,redirect
 
 app = Flask(__name__)
 
@@ -54,7 +55,6 @@ def recurso_no_encontrado(error):
     return  notfound
 
 
-
 def gestionopenfda(gestion):
     headers = {'User-Agent': 'http-client'}
 
@@ -69,11 +69,9 @@ def gestionopenfda(gestion):
     if "results" in datos:
         for elem in datos['results']:
             if 'generic_name' in elem['openfda']:
-                drugs += str(elem['openfda']['generic_name'][0])
-                drugs += "</br></body></html>"
+                drugs += "<li>" + str(elem['openfda']['generic_name'][0]) +"</li>"
             else:
-                drugs += ("No encontrado")
-                drugs += "</br></body></html>"
+                drugs += "<li>" + ("No encontrado") +"</li>"
                 continue
     return drugs
 
@@ -92,11 +90,9 @@ def gestionopenfda1(gestion1):
     if "results" in datos:
         for elem in datos['results']:
             if 'generic_name' in elem['openfda']:
-                drugs += str(elem['openfda']['manufacturer_name'][0])
-                drugs += "</br></body></html>"
+                drugs += "<li>" + str(elem['openfda']['manufacturer_name'][0]) +"</li>"
             else:
-                drugs += ("No encontrado")
-                drugs += "</br></body></html>"
+                drugs += "<li>" +("No encontrado") +"</li>"
                 continue
     return drugs
 
@@ -111,15 +107,12 @@ def advertencias(warnings):
     datos = json.loads(resp)
 
     drugs = ""
-    if "results" in datos:
-        for elem in datos['results']:
-            if 'warnings' in elem:
-                drugs += str(['warnings'][0])
-                drugs += "</br></body></html>"
-            else:
-                drugs += ("No hay advertencias")
-                drugs += "</br></body></html>"
-                continue
+    for elem in datos['results']:
+        if 'warnings' in elem:
+            drugs += "<li>" + str(elem['warnings']) +"</li>"
+        else:
+            drugs += "<li>" + ("No hay advertencias") +"</li>"
+            continue
     return drugs
 
 
@@ -147,7 +140,7 @@ def paginaHTML():
         <body>
         <body style='background-color: turquoise'>
         <h2>Active ingredient</h2>
-        <form action="/searchDrug">
+        <form action="searchDrug">
           active_ingredient:<br>
           <input type="text" name="active_ingredient">
           <br><br>
@@ -160,7 +153,7 @@ def paginaHTML():
         <html>
         <body>
         <h2>Company</h2>
-        <form action="/searchCompany">
+        <form action="searchCompany">
           company:<br>
           <input type="text" name="manufacturer_name">
           <br><br>
@@ -173,7 +166,7 @@ def paginaHTML():
         <html>
         <body>
         <h2>Drugs list</h2>
-        <form action="/listDrugs">
+        <form action="listDrugs">
           Limit:<br>
           <input type="text" name="limit">
           <br><br>
@@ -186,7 +179,7 @@ def paginaHTML():
         <html>
         <body>
         <h2>Companies list</h2>
-        <form action="/listCompanies">
+        <form action="listCompanies">
           Limit:<br>
           <input type="text" name="limit">
           <br><br>
@@ -199,7 +192,7 @@ def paginaHTML():
             <html>
             <body>
             <h2>Warnings list</h2>
-            <form action="/listWarnings">
+            <form action="listWarnings">
               Limit:<br>
               <input type="text" name="limit">
               <br><br>
@@ -211,6 +204,9 @@ def paginaHTML():
     return contenido
 
 
+@app.route('/')
+def hello():
+    return redirect("http://localhost:8000/", code=302)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=8000)
