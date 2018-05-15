@@ -47,12 +47,18 @@ def gestionopenfda(gestion):
     drugs = ""
     if "results" in datos:
         for elem in datos['results']:
-            if elem['openfda']:
+            if 'generic_name' in elem['openfda']:
+                drugs += "<li>"
                 drugs += str(elem['openfda']['generic_name'][0])
-                drugs += "<br>"
+                drugs += "</li>"
+            elif 'manufacturer_name' in elem['openfda']:
+                drugs += "<li>"
+                drugs += str(elem['openfda']['manufacturer_name'][0])
+                drugs += "</li>"
             else:
+                drugs += "<li>"
                 drugs += ("No encontrado")
-                drugs += "<br>"
+                drugs += "</li>"
                 continue
     return drugs
 
