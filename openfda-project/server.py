@@ -15,7 +15,7 @@ def buscar_drugs():
 
 @app.route("/searchCompany")
 def buscar_empresa():
-    empresa = request.args.get('company').replace(" ", "%20")
+    empresa = request.args.get('manufacturer_name').replace(" ", "%20")
     gestion = gestionopenfda("/drug/label.json?search=manufacturer_name:"+empresa+"&limit=10")
     mi_html = informacion(gestion)
     return mi_html
