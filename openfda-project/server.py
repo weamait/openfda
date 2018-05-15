@@ -16,7 +16,7 @@ def buscar_drugs():
 
 @app.route("/searchCompany")
 def buscar_empresa():
-    empresa = request.args.get('manufacturer_name').replace(" ", "%20")
+    empresa = request.args.get('company').replace(" ", "%20")
     gestion1 = gestionopenfda1("/drug/label.json?search=manufacturer_name:"+empresa+"&limit=10")
     mi_html = informacion(gestion1)
     return mi_html
@@ -41,18 +41,6 @@ def lista_advertencias():
     warnings = advertencias("/drug/label.json?&limit="+adver)
     mi_html = informacion(warnings)
     return mi_html
-
-@app.errorhandler(404)
-def recurso_no_encontrado(error):
-    notfound = """
-              <!doctype html>
-              <html>
-              <body style='background-color: red'>
-                <h1>Recurso no encontrado</h2>
-              </body>
-              </html>
-            """
-    return  notfound
 
 
 def gestionopenfda(gestion):
@@ -155,7 +143,7 @@ def paginaHTML():
         <h2>Company</h2>
         <form action="searchCompany">
           company:<br>
-          <input type="text" name="manufacturer_name">
+          <input type="text" name="company">
           <br><br>
           <input type="submit" value="Submit">
         </form>
