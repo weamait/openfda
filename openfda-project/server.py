@@ -49,8 +49,8 @@ def recurso_no_encontrado(error):
               <html>
               <body style='background-color: red'>
                 <h1>Recurso no encontrado</h2>
-              <body>
-              <html>
+              </body>
+              </html>
             """
     return  notfound
 
@@ -204,9 +204,13 @@ def paginaHTML():
     return contenido
 
 
-@app.route('/')
-def hello():
+@app.route('/redirect')
+def redireccion():
     return redirect("http://localhost:8000/", code=302)
+
+@app.route('/secret')
+def autenticacion():
+    return redirect("http://localhost:8000/", code=401)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=8000)
