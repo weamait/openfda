@@ -137,9 +137,6 @@ def paginaHTML():
         <form action="/searchDrug">
           active_ingredient:<br>
           <input type="text" name="active_ingredient">
-          <br>
-          Limit:<br>
-          <input type="text" name="active_ingredient">
           <br><br>
           <input type="submit" value="Submit">
         </form>
@@ -153,9 +150,6 @@ def paginaHTML():
         <form action="/searchCompany">
           company:<br>
           <input type="text" name="manufacturer_name">
-          <br>
-          Limit:<br>
-          <input type="text" name="limit">
           <br><br>
           <input type="submit" value="Submit">
         </form>
