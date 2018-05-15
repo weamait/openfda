@@ -34,6 +34,13 @@ def lista_empresas():
     mi_html = informacion1(gestion1)
     return mi_html
 
+@app.route("/listWarnings")
+def lista_advertencias():
+    adver = request.args.get('limit')
+    warnings = advertencias("/drug/label.json?&limit="+adver)
+    mi_html = informacion2(warnings)
+    return mi_html
+
 @app.errorhandler(404)
 def recurso_no_encontrado(error):
     notfound = """
@@ -123,6 +130,44 @@ def informacion1(drugs1):
 
     return info1
 
+def advertencias(warnings):
+    headers = {'User-Agent': 'http-client'}
+
+    conn = http.client.HTTPSConnection("api.fda.gov")
+    conn.request("GET", warnings, None, headers)
+    respuesta = conn.getresponse()
+    resp = respuesta.read().decode("utf-8")
+    conn.close()
+    datos2 = json.loads(resp)
+
+    drugs2 = ""
+    if "results" in datos2:
+        for elem in datos2['results']:
+            if 'warnings' in elem:
+                drugs2 += str(['warnings'][0])
+                drugs2 += "</br></body></html>"
+            else:
+                drugs2 += ("No hay advertencias")
+                drugs2 += "</br></body></html>"
+                continue
+    return drugs2
+
+
+def informacion2(drugs2):
+    info2 = """
+              <!doctype html>
+              <html>
+              <body style='background-color: DeepSkyBlue'>
+                <h1>Drugs</h2>
+              <body>
+              <html>
+              <ul>
+            """
+    info2 += drugs2
+    info2 += """</ul></body></html>"""
+
+    return info2
+
 
 
 
@@ -181,6 +226,19 @@ def paginaHTML():
         </form>
         </body>
         </html>"""
+    contenido += """
+            <!DOCTYPE html>
+            <html>
+            <body>
+            <h2>Warnings list</h2>
+            <form action="/listWarnings">
+              Limit:<br>
+              <input type="text" name="limit">
+              <br><br>
+              <input type="submit" value="Submit">
+            </form>
+            </body>
+            </html>"""
 
     return contenido
 
